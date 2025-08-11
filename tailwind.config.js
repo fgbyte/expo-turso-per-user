@@ -8,6 +8,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        aquamarine: "#4ff8d2",
+        "rich-black": "#011618",
+        "brunswick-green": "#154F47",
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

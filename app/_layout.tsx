@@ -1,15 +1,21 @@
-import '~/global.css';
-
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import { DarkTheme, DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-import { Appearance, Platform, View } from 'react-native';
+import { ActivityIndicator, Appearance, Platform, SafeAreaView, View } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
 import { ThemeToggle } from '~/components/ThemeToggle';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
+import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import * as WebBrowser from 'expo-web-browser'
+import { useEffect } from 'react'
+
+import '~/global.css';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -31,25 +37,87 @@ const usePlatformSpecificSetup = Platform.select({
   default: noop,
 });
 
-export default function RootLayout() {
-  usePlatformSpecificSetup();
-  const { isDarkColorScheme } = useColorScheme();
+//auth
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!
 
+if (!publishableKey) {
+  throw new Error(
+    'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env',
+  )
+}
+
+WebBrowser.maybeCompleteAuthSession()
+
+export function InitialLayout() {
+  const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const { isLoaded, isSignedIn } = useAuth()
+  const segments = useSegments()
+  const router = useRouter()
+
+  usePlatformSpecificSetup();
+
+  useEffect(() => {
+    const inAuthGroup = segments[0] === '(auth)';
+    if (!isLoaded) return;
+
+    if (isSignedIn && !inAuthGroup) {
+      router.replace('/(dashboard)');
+    } else if (!isSignedIn) {
+      router.replace('/(auth)/login');
+    }
+  }, [isSignedIn, isLoaded]);
+
+
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
       <Stack>
         <Stack.Screen
-          name='index'
+          name='(dashboard)'
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name='(auth)/login'
           options={{
             title: 'Starter Base',
-            headerRight: () => <ThemeToggle />,
+            headerRight: () => <ThemeToggle />
+          }}
+        />
+        <Stack.Screen
+          name='index'
+          options={{
+            headerShown: false,
           }}
         />
       </Stack>
       <PortalHost />
     </ThemeProvider>
-  );
+  )
+
+}
+
+export default function RootLayout() {
+
+  return (
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+          <InitialLayout />
+        </SafeAreaView>
+      </SafeAreaProvider>
+
+    </ClerkProvider>
+
+  )
 }
 
 const useIsomorphicLayoutEffect =
@@ -68,4 +136,4 @@ function useSetAndroidNavigationBar() {
   }, []);
 }
 
-function noop() {}
+function noop() { }
