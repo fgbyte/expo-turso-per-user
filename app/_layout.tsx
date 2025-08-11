@@ -80,22 +80,10 @@ export function InitialLayout() {
       <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
       <Stack>
         <Stack.Screen
-          name='(dashboard)'
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
           name='(auth)/login'
           options={{
             title: 'Starter Base',
             headerRight: () => <ThemeToggle />
-          }}
-        />
-        <Stack.Screen
-          name='index'
-          options={{
-            headerShown: false,
           }}
         />
       </Stack>
