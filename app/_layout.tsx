@@ -102,7 +102,6 @@ export default function RootLayout() {
           <InitialLayout />
         </SafeAreaView>
       </SafeAreaProvider>
-
     </ClerkProvider>
 
   )
