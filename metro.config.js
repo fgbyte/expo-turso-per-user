@@ -1,6 +1,9 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
 
+console.log('🔧 Metro config loaded - libsql aliases will be applied');
+
+
 const config = getDefaultConfig(__dirname);
 
 config.resolver.unstable_enablePackageExports = true;

@@ -1,9 +1,9 @@
 //tools
 import { useAuth } from "@clerk/clerk-expo";
 import md5 from "md5";
-import { drizzle } from "drizzle-orm/libsql";
 import { router } from "expo-router";
 //clients
+import { drizzle } from "drizzle-orm/libsql/web";
 import { createClient as createLibsqlClient } from "@libsql/client/web";
 import { createClient as createTursoClient } from "@tursodatabase/api";
 
