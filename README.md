@@ -1,6 +1,16 @@
-# Starter base
+# Expo Turso per user
 
-A starting point to help you set up your project quickly and use the common components provided by `react-native-reusables`. The idea is to make it easier for you to get started.
+This repo is a try to adapt https://github.com/notrab/turso-per-user-starter to the Expo environment
+
+## Usage
+
+Clone the repo
+
+Install deps with `expo install`, use bun or as you like
+Example:
+```sh
+bunx expo install
+```
 
 ## Features
 
@@ -10,7 +20,3 @@ A starting point to help you set up your project quickly and use the common comp
   - Persistent mode
 - Common components
   - ThemeToggle, Avatar, Button, Card, Progress, Text, Tooltip
-
-<img src="https://github.com/mrzachnugent/react-native-reusables/assets/63797719/42c94108-38a7-498b-9c70-18640420f1bc"
-     alt="starter-base-template"
-     style="width:270px;" />
